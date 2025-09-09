@@ -1,0 +1,7 @@
+[project]
+name = "einstieg"
+version = "0.1.0"
+description = "Location-based chat application that connects users who are within close proximity—specifically, within 500 meters."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = ["fastapi[standard]>=0.116.1"]

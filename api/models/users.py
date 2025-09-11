@@ -7,7 +7,7 @@ class Coordinates(BaseModel):
 
 
 class NearbyUser(BaseModel):
-    userId: str
+    user_id: str
     name: str
     distance: float
     coordinates: Coordinates

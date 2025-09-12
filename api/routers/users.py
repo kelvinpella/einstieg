@@ -1,10 +1,11 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from supabase_auth.types import UserResponse
-from ..dependencies import verify_jwt
-from ..models.users import Coordinates, NearbyUser
+from ..dependencies import Dependencies
+from ..services.user_service import UserService
+from ..models.user import Coordinates, NearbyUser
 
-authenticated_user_dependency = Depends(verify_jwt)
+authenticated_user_dependency = Depends(Dependencies.verify_jwt)
 
 router = APIRouter(prefix="/users", dependencies=[authenticated_user_dependency])
 
@@ -19,13 +20,8 @@ def get_nearby_users(
             raise HTTPException(
                 status_code=404, detail="Coordinates not found in user metadata"
             )
-        return [
-            NearbyUser(
-                user_id=user.id,
-                name="kelvin",
-                distance=45.5,
-                coordinates=Coordinates(latitude=34.6, longitude=45.8),
-            )
-        ]
+        coordinates = Coordinates(**user.user_metadata["coordinates"])
+        nearby_users =UserService.filter_nearby_users(**coordinates.__dict__)
+        return nearby_users
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))

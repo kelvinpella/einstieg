@@ -1,36 +1,37 @@
-from typing import Annotated
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from supabase import Client
-from supabase_auth import UserResponse
-from .db.client import create_supabase_client
+from .db.client import DbClient
 
 
-security = HTTPBearer()
-supabase: Client = create_supabase_client()
+class Dependencies:
+    # Both 'security' and 'supabase' are used as shared dependencies/resources and do not require per-instance state,
+    # so they are best defined as class attributes.
+    security = HTTPBearer()
+    supabase: Client = DbClient.create_supabase_client()
 
+    @classmethod
+    def verify_jwt(
+        cls,
+        credentials: HTTPAuthorizationCredentials = Depends(security),
+    ):
+        """
+        Verifies the provided JWT access token using Supabase authentication.
 
-def verify_jwt(
-    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
-) -> UserResponse:
-    """
-    Verifies the provided JWT access token using Supabase authentication.
+        Args:
+            credentials (HTTPAuthorizationCredentials): The HTTP authorization credentials containing the JWT access token.
 
-    Args:
-        credentials (HTTPAuthorizationCredentials): The HTTP authorization credentials containing the JWT token.
+        Returns:
+            UserResponse: The user information associated with the valid JWT token.
 
-    Returns:
-        user_response: The user_response object returned by Supabase if the token is valid.
-
-    Raises:
-        HTTPException: If the token is invalid or an error occurs during verification, raises a 401 Unauthorized error.
-    """
-    token = credentials.credentials
-    try:
-        user_response = supabase.auth.get_user(token)
-        if not user_response:
-            raise HTTPException(status_code=401, detail="Invalid token")
-        return user_response
-
-    except Exception as e:
-        raise HTTPException(status_code=401, detail=str(e))
+        Raises:
+            HTTPException: If the token is invalid or verification fails.
+        """
+        token = credentials.credentials
+        try:
+            user_response = cls.supabase.auth.get_user(token)
+            if not user_response:
+                raise HTTPException(status_code=401, detail="Invalid token")
+            return user_response
+        except Exception as e:
+            raise HTTPException(status_code=401, detail=str(e))

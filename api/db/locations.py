@@ -22,6 +22,18 @@ class DbLocations:
             cls.supabase.table("locations").select("*").eq("user_id", user_id).execute()
         )
         data = result.data
-        if not data:
-            raise ValueError("User location not found")
+        print(data)
+        # if not data:
+        #     raise ValueError("User location not found")
         return UserLocation(**data[0])
+
+    @classmethod
+    def store_user_location(cls, user_id: str, latitude: float, longitude: float):
+        data = {"user_id": user_id, "location": f"POINT({longitude} {latitude})"}
+        response = (
+            cls.supabase.table("locations").upsert(data, on_conflict=user_id).execute()
+        )
+        print(response.data)
+        return UserLocation(
+            **{"user_id": "Random", "latitude": 45.4, "longitude": 83.9}
+        )

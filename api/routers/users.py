@@ -1,12 +1,11 @@
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 from supabase_auth import User
+from ..dependencies import authenticated_user_dependency
 from ..db.locations import DbLocations
-from ..dependencies import Dependencies
 from ..services.user_service import UserService
 from ..models.user import NearbyUser
 
-authenticated_user_dependency = Depends(Dependencies.verify_jwt)
 
 router = APIRouter(prefix="/users", dependencies=[authenticated_user_dependency])
 

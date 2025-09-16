@@ -35,3 +35,6 @@ class Dependencies:
             return user_response.user
         except Exception as e:
             raise HTTPException(status_code=401, detail=str(e))
+
+
+authenticated_user_dependency = Depends(Dependencies.verify_jwt)

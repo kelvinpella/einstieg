@@ -1,7 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel 
+
+from ..models.user import Coordinates
 
 
 class UserLocation(BaseModel):
     user_id: str
-    latitude: float
-    longitude: float
+    coordinates: Coordinates

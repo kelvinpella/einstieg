@@ -5,14 +5,12 @@ from .db.client import DbClient
 
 
 class Dependencies:
-    # Both 'security' and 'supabase' are used as shared dependencies/resources and do not require per-instance state,
-    # so they are best defined as class attributes.
+    # 'security' used as shared dependencies/resources and do not require per-instance state,
+    # so they best defined as class attributes.
     security = HTTPBearer()
-    supabase: Client = DbClient.create_supabase_client()
 
-    @classmethod
+    @staticmethod
     def verify_jwt(
-        cls,
         credentials: HTTPAuthorizationCredentials = Depends(security),
     ):
         """
@@ -29,7 +27,8 @@ class Dependencies:
         """
         token = credentials.credentials
         try:
-            user_response = cls.supabase.auth.get_user(token)
+            supabase: Client = DbClient.create_supabase_client()
+            user_response = supabase.auth.get_user(token)
             if not user_response:
                 raise HTTPException(status_code=401, detail="Invalid token")
             return user_response.user

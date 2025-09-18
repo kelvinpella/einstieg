@@ -18,7 +18,7 @@ def update_user_location(
     coordinates: Coordinates, user: User = authenticated_user_dependency
 ):
     try:
-        updated_location = DbLocations.store_user_location(
+        updated_location = DbLocations.add_or_update_user_location(
             user.id, coordinates.latitude, coordinates.longitude
         )
         return updated_location

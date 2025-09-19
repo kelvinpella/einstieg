@@ -4,20 +4,24 @@ from .client import DbClient
 
 
 class DbLocations:
-    @staticmethod
-    def get_user_location(user_id: str):
-        supabase: Client = DbClient.create_supabase_client()
+    supabase: Client = DbClient.create_supabase_client()
+
+    @classmethod
+    def get_user_location(cls, user_id: str):
         result = (
-            supabase.table("locations").select("*").eq("user_id", user_id).execute()
+            cls.supabase.rpc("get_user_location", {"p_user_id": user_id})
+            .single()
+            .execute()
         )
         data = result.data
-        return UserLocation(**data[0])
+        return UserLocation(**data)
 
-    @staticmethod
-    def add_or_update_user_location(user_id: str, latitude: float, longitude: float):
-        supabase: Client = DbClient.create_supabase_client()
+    @classmethod
+    def add_or_update_user_location(
+        cls, user_id: str, latitude: float, longitude: float
+    ):
         response = (
-            supabase.rpc(
+            cls.supabase.rpc(
                 "add_or_update_user_location",
                 {
                     "p_user_id": user_id,

@@ -5,9 +5,7 @@ from ..dependencies import authenticated_user_dependency
 
 from ..db.locations import DbLocations
 
-from ..models.location import UserLocation
-
-from ..models.user import Coordinates
+from ..models.location import Coordinates, UserLocation
 
 
 router = APIRouter(prefix="/locations")

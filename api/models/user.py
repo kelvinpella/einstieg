@@ -1,13 +1,8 @@
 from pydantic import BaseModel
 
-
-class Coordinates(BaseModel):
-    latitude: float
-    longitude: float
+from api.models.location import UserLocation
 
 
 class NearbyUser(BaseModel):
-    user_id: str
-    name: str
+    user_location: UserLocation
     distance: float
-    coordinates: Coordinates

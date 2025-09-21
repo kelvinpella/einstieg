@@ -11,5 +11,4 @@ SUPABASE_KEY = os.environ["SUPABASE_KEY"]
 # SUPABASE_SERVICE_ROLE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
 
 
-class DbClient:
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)

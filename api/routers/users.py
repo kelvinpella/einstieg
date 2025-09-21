@@ -8,6 +8,8 @@ from ..models.user import NearbyUser
 
 router = APIRouter(prefix="/users")
 
+db_users = DbUsers()
+
 
 @router.get("/nearby_users", response_model=List[NearbyUser])
 def get_nearby_users(
@@ -26,7 +28,7 @@ def get_nearby_users(
         HTTPException: If an error occurs while retrieving nearby users.
     """
     try:
-        users = DbUsers.get_nearby_users(user.id)
+        users = db_users.get_nearby_users(user.id)
         return users
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))

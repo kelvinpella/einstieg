@@ -1,14 +1,16 @@
+from .database import supabase
 from ..models.user import NearbyUser
-from .client import DbClient
 
 
-class DbUsers(DbClient):
-    @classmethod
-    def get_nearby_users(cls, user_id: str):
+class DbUsers:
+    def __init__(self) -> None:
+        self.supabase = supabase
+
+    def get_nearby_users(self, user_id: str):
         """
         Retrieve a list of nearby users for the given user_id.
         """
-        response = cls.supabase.rpc(
+        response = self.supabase.rpc(
             "get_nearby_users",
             {
                 "p_user_id": user_id,

@@ -1,16 +1,16 @@
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from supabase import Client
 from .db.client import DbClient
 
 
-class Dependencies:
+class Dependencies(DbClient):
     # 'security' used as shared dependencies/resources and do not require per-instance state,
     # so they best defined as class attributes.
     security = HTTPBearer()
 
-    @staticmethod
+    @classmethod
     def verify_jwt(
+        cls,
         credentials: HTTPAuthorizationCredentials = Depends(security),
     ):
         """
@@ -27,8 +27,7 @@ class Dependencies:
         """
         token = credentials.credentials
         try:
-            supabase: Client = DbClient.create_supabase_client()
-            user_response = supabase.auth.get_user(token)
+            user_response = cls.supabase.auth.get_user(token)
             if not user_response:
                 raise HTTPException(status_code=401, detail="Invalid token")
             return user_response.user

@@ -1,5 +1,7 @@
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
+from .errors import InternalServerError, InvalidToken
 
 from .db.database import supabase
 
@@ -23,10 +25,12 @@ def verify_jwt(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
         user_response = supabase.auth.get_user(token)
         if not user_response:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise InvalidToken(message="Invalid token")
         return user_response.user
+    except InvalidToken:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=401, detail=str(e))
+        raise InternalServerError(message=f"Something went wrong. {str(e)}")
 
 
 authenticated_user_dependency = Depends(verify_jwt)

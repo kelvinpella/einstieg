@@ -1,6 +1,7 @@
 from typing import List
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from supabase_auth import User
+from ..errors import InternalServerError
 from ..db.users import DbUsers
 from ..dependencies import authenticated_user_dependency
 from ..models.user import NearbyUser
@@ -31,4 +32,4 @@ def get_nearby_users(
         users = db_users.get_nearby_users(user.id)
         return users
     except Exception as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        raise InternalServerError(message=f"Something went wrong. {str(e)}")

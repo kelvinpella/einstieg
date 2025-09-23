@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 from supabase_auth import User
+
+from api.errors import InternalServerError
+
 from ..db.locations import DbLocations
 from ..dependencies import authenticated_user_dependency
 from ..models.location import Coordinates, UserLocation
@@ -19,4 +22,4 @@ def update_user_location(
         )
         return updated_location
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise InternalServerError(message=f"Something went wrong. {str(e)}")

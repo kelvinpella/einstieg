@@ -32,4 +32,5 @@ class DbLocations:
                 "p_longitude": longitude,
             },
         )
+        
         return UserLocation(**{**data, "user_id": data["returned_user_id"]})
